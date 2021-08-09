@@ -21,10 +21,10 @@ class SpleeterPredictor(cog.Predictor):
         waveform, _ = self.audio_loader.load(str(input), sample_rate=sample_rate)
         prediction = self.separator.separate(waveform)
 
-        out_path_vocals = Path(tempfile.mkdtemp()) / "vocals.wav"
-        out_path_accompaniment = Path(tempfile.mkdtemp()) / "accompaniment.wav"
+        out_path_vocals = Path(tempfile.mkdtemp()) / "output_vocals.wav"
+        out_path_accompaniment = Path(tempfile.mkdtemp()) / "output_accompaniment.wav"
 
         self.audio_loader.save(str(out_path_vocals), prediction['vocals'], sample_rate=sample_rate)
         self.audio_loader.save(str(out_path_accompaniment), prediction['accompaniment'], sample_rate=sample_rate)
 
-        return [out_path_vocals]
+        return out_path_vocals
