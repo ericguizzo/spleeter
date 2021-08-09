@@ -1,0 +1,8 @@
+build:
+  python_version: "3.8"
+  gpu: false
+  python_packages:
+    - spleeter==2.1.0
+  system_packages:
+    - "ffmpeg"
+predict: "predict.py:SpleeterPredictor"
