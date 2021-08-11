@@ -1,10 +1,11 @@
 import os
 import cog
 import tempfile
-
+import shutil
 from pathlib import Path
 from spleeter.separator import Separator
 from spleeter.audio.adapter import AudioAdapter
+import zipfile
 
 class SpleeterPredictor(cog.Predictor):
     def setup(self):
@@ -21,10 +22,17 @@ class SpleeterPredictor(cog.Predictor):
         waveform, _ = self.audio_loader.load(str(input), sample_rate=sample_rate)
         prediction = self.separator.separate(waveform)
 
-        out_path_vocals = Path(tempfile.mkdtemp()) / "output_vocals.wav"
-        out_path_accompaniment = Path(tempfile.mkdtemp()) / "output_accompaniment.wav"
+        out_path = Path(tempfile.mkdtemp())
+        zip_path = Path(tempfile.mkdtemp()) / "output.zip"
+
+        out_path_vocals = out_path / "vocals.wav"
+        out_path_accompaniment = out_path / "accompaniment.wav"
 
         self.audio_loader.save(str(out_path_vocals), prediction['vocals'], sample_rate=sample_rate)
         self.audio_loader.save(str(out_path_accompaniment), prediction['accompaniment'], sample_rate=sample_rate)
 
-        return out_path_vocals
+        with zipfile.ZipFile(str(zip_path), "w") as zf:
+            zf.write(str(out_path_vocals))
+            zf.write(str(out_path_accompaniment))
+
+        return zip_path
